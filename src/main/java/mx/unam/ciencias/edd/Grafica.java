@@ -200,12 +200,9 @@ public class Grafica<T> implements Coleccion<T> {
         Vertice v = (Vertice) vertice(elemento);
 
         for (Vertice x : v.vecinos)
-            for (Vertice y : )
-                x.vecinos.elimina(v);
+            x.vecinos.elimina(v);
         
         vertices.elimina(v);
-
-        // FALTA ---------------
     }
 
     /**
@@ -264,6 +261,8 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public boolean esConexa() {
         // Aquí va su código.
+        if (aristas < vertices.getLongitud()-1)
+            return false;
     }
 
     /**
@@ -273,6 +272,8 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void paraCadaVertice(AccionVerticeGrafica<T> accion) {
         // Aquí va su código.
+        for (Vertice v : v)
+            accion.actua(v);
     }
 
     /**
@@ -287,6 +288,9 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void bfs(T elemento, AccionVerticeGrafica<T> accion) {
         // Aquí va su código.
+        Cola<Vertice> c = new Cola<Vertice>();
+        recorrer(elemento, accion, c);
+        
     }
 
     /**
@@ -301,6 +305,12 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void dfs(T elemento, AccionVerticeGrafica<T> accion) {
         // Aquí va su código.
+        Pila<Vertice> c = new Pila<Vertice>();
+        recorrer(elemento, accion, c);
+    }
+
+    private void recorrer(T elem, AccionVerticeGrafica<T> a, MeteSaca<T> punpun) {
+
     }
 
     /**
