@@ -134,11 +134,8 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void conecta(T a, T b) {
         // Aquí va su código.
-        Vertice ying = new Vetice(a);
-        Vertice yang = new Vetice(b);
-
-        if (!vertice.contiene(ying) || !vertice.contiene(yang))
-            throw new NoSuchElementException();
+        Vertice ying = vertice(a);
+        Vertice yang = vertice(b);
 
         if (ying.vecinos.contiene(yang) && (yang.vecinos.contiene(ying)))
             throw new IllegalArgumentException();
@@ -159,11 +156,8 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void desconecta(T a, T b) {
         // Aquí va su código.
-        Vertice ying = new Vetice(a);
-        Vertice yang = new Vetice(b);
-
-        if (!vertice.contiene(ying) || !vertice.contiene(yang))
-            throw new NoSuchElementException();
+        Vertice ying = (Vertrice) vertice(a);
+        Vertice yang = (Vertrice) vertice(b);
 
         if (!ying.vecinos.contiene(yang) && !yang.vecinos.contiene(ying))
             throw new IllegalArgumentException();
@@ -200,7 +194,7 @@ public class Grafica<T> implements Coleccion<T> {
         Vertice v = (Vertice) vertice(elemento);
 
         for (Vertice x : v.vecinos)
-            x.vecinos.elimina(v);
+            desconecta(x.elemento, elemento);
         
         vertices.elimina(v);
     }
@@ -215,13 +209,14 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public boolean sonVecinos(T a, T b) {
         // Aquí va su código.
-        Vertice ying = new Vetice(a);
-        Vertice yang = new Vetice(b);
+        Vertice ying = vertice(a);
+        Vertice yang = vertice(b);
 
-        if (!vertice.contiene(ying) || !vertice.contiene(yang))
-            throw new NoSuchElementException();
+        for (Vertice x : ying.vecinos)
+            if (x == yang)
+                return true;
 
-        return ying.vecinos.contiene(yang) && yang.vecinos.contiene(ying);
+        return false;
     }
 
     /**
@@ -261,8 +256,27 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public boolean esConexa() {
         // Aquí va su código.
-        if (aristas < vertices.getLongitud()-1)
+        if (esVacia() || vertices.getLongitud() == 1)
             return false;
+
+        Cola <Vertice> coliflor = new Cola<Vertice>();
+        Vertice v = vertices.getPrimero();
+        coliflor.mete(v);
+
+        while (!coliflor.esVacia()) {
+            Vertice temp = coliflor.saca();
+            temp.color = Color.ROJO;
+
+            for (Vertice uwu : temp.vecinos)
+                if (uwu.color != Color.ROJO) {
+                    coliflor.mete(uwu);
+                    uwu.color = Color.ROJO;
+                }
+        }
+
+        for (Vertice o : vertices)
+            if (o.color != Color.ROJO)
+                return false;
     }
 
     /**
@@ -310,7 +324,22 @@ public class Grafica<T> implements Coleccion<T> {
     }
 
     private void recorrer(T elem, AccionVerticeGrafica<T> a, MeteSaca<T> punpun) {
+        Vertice v = vertice(elem);
+        punpun.mete(v);
 
+        while (!punpun.esVacia()) {
+            Vertice temp = punpun.saca();
+            temp.color = Color.ROJO;
+            a.actua(temp);
+
+            for (Vertice uwu : temp.vecinos)
+                if (uwu.color != Color.ROJO) {
+                    punpun.mete(uwu);
+                    uwu.color = Color.ROJO;
+                }
+        }
+
+        paraCadaVertice(y -> y.setColor(Color.NINGUNO));
     }
 
     /**
