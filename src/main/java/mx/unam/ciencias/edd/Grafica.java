@@ -18,7 +18,7 @@ public class Grafica<T> implements Coleccion<T> {
         /* Construye un nuevo iterador, auxiliándose de la lista de vértices. */
         public Iterador() {
             // Aquí va su código.
-            iterador = vertices.iterador();
+            iterador = vertices.iterator();
         }
 
         /* Nos dice si hay un siguiente elemento. */
@@ -73,6 +73,7 @@ public class Grafica<T> implements Coleccion<T> {
         /* Regresa un iterable para los vecinos. */
         @Override public Iterable<? extends VerticeGrafica<T>> vecinos() {
             // Aquí va su código.
+            return vecinos;
         }
     }
 
@@ -117,8 +118,8 @@ public class Grafica<T> implements Coleccion<T> {
      */
     @Override public void agrega(T elemento) {
         // Aquí va su código.
-        if (contiene(elemento))
-            return IllegalArgumentException();
+        if (elemento == null || contiene(elemento))
+            throw new IllegalArgumentException();
 
         vertices.agrega(new Vertice(elemento));
     }
@@ -134,10 +135,10 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void conecta(T a, T b) {
         // Aquí va su código.
-        Vertice ying = vertice(a);
-        Vertice yang = vertice(b);
+        Vertice ying = (Vertice) vertice(a);
+        Vertice yang = (Vertice) vertice(b);
 
-        if (ying.vecinos.contiene(yang) && (yang.vecinos.contiene(ying)))
+        if (a.equals(b) || ying.vecinos.contiene(yang) && (yang.vecinos.contiene(ying)))
             throw new IllegalArgumentException();
 
         ying.vecinos.agrega(yang);
@@ -156,8 +157,8 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void desconecta(T a, T b) {
         // Aquí va su código.
-        Vertice ying = (Vertrice) vertice(a);
-        Vertice yang = (Vertrice) vertice(b);
+        Vertice ying = (Vertice) vertice(a);
+        Vertice yang = (Vertice) vertice(b);
 
         if (!ying.vecinos.contiene(yang) && !yang.vecinos.contiene(ying))
             throw new IllegalArgumentException();
@@ -209,8 +210,8 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public boolean sonVecinos(T a, T b) {
         // Aquí va su código.
-        Vertice ying = vertice(a);
-        Vertice yang = vertice(b);
+        Vertice ying = (Vertice) vertice(a);
+        Vertice yang = (Vertice) vertice(b);
 
         for (Vertice x : ying.vecinos)
             if (x == yang)
@@ -242,7 +243,7 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void setColor(VerticeGrafica<T> vertice, Color color) {
         // Aquí va su código.
-        if (vertice == null)
+        if (vertice == null || vertice.getClass() != Vertice.class)
             throw new IllegalArgumentException();
 
         Vertice v = (Vertice) vertice;
@@ -256,27 +257,10 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public boolean esConexa() {
         // Aquí va su código.
-        if (esVacia() || vertices.getLongitud() == 1)
-            return false;
+        Lista <Vertice> lista = new Lista<Vertice>();
+        bfs(vertices.getPrimero().get(), y -> lista.agrega((Vertice) y));
 
-        Cola <Vertice> coliflor = new Cola<Vertice>();
-        Vertice v = vertices.getPrimero();
-        coliflor.mete(v);
-
-        while (!coliflor.esVacia()) {
-            Vertice temp = coliflor.saca();
-            temp.color = Color.ROJO;
-
-            for (Vertice uwu : temp.vecinos)
-                if (uwu.color != Color.ROJO) {
-                    coliflor.mete(uwu);
-                    uwu.color = Color.ROJO;
-                }
-        }
-
-        for (Vertice o : vertices)
-            if (o.color != Color.ROJO)
-                return false;
+        return lista.getLongitud() == vertices.getLongitud();
     }
 
     /**
@@ -286,7 +270,7 @@ public class Grafica<T> implements Coleccion<T> {
      */
     public void paraCadaVertice(AccionVerticeGrafica<T> accion) {
         // Aquí va su código.
-        for (Vertice v : v)
+        for (Vertice v : vertices)
             accion.actua(v);
     }
 
@@ -323,8 +307,8 @@ public class Grafica<T> implements Coleccion<T> {
         recorrer(elemento, accion, c);
     }
 
-    private void recorrer(T elem, AccionVerticeGrafica<T> a, MeteSaca<T> punpun) {
-        Vertice v = vertice(elem);
+    private void recorrer(T elem, AccionVerticeGrafica<T> a, MeteSaca<Vertice> punpun) {
+        Vertice v = (Vertice) vertice(elem);
         punpun.mete(v);
 
         while (!punpun.esVacia()) {
@@ -339,7 +323,7 @@ public class Grafica<T> implements Coleccion<T> {
                 }
         }
 
-        paraCadaVertice(y -> y.setColor(Color.NINGUNO));
+        paraCadaVertice(y -> setColor(y, Color.NINGUNO));
     }
 
     /**
@@ -367,6 +351,24 @@ public class Grafica<T> implements Coleccion<T> {
      */
     @Override public String toString() {
         // Aquí va su código.
+        String r = "{";
+        
+        for (Vertice v : vertices) {
+            r += v.get().toString() + ", ";
+        } r += "}, {";
+
+        for (Vertice v : vertices) {
+            for (Vertice u : v.vecinos) {
+                if (u.color != Color.ROJO)
+                    r += "(" + v.get().toString() + ", " + u.get().toString() + "), ";
+            }
+
+            v.color = Color.ROJO;
+        } r += "}";
+
+        paraCadaVertice(y -> setColor(y, Color.NINGUNO));
+
+        return r;
     }
 
     /**
@@ -380,6 +382,20 @@ public class Grafica<T> implements Coleccion<T> {
             return false;
         @SuppressWarnings("unchecked") Grafica<T> grafica = (Grafica<T>)objeto;
         // Aquí va su código.
+        if (grafica.aristas != aristas || grafica.vertices.getLongitud() != vertices.getLongitud())
+            return false;
+
+        for (Vertice v : vertices) {
+            if (!grafica.contiene(v.get()))
+                return false;
+
+            for (Vertice x : v.vecinos) {
+                if (!grafica.sonVecinos(v.get(), x.get()))
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     /**
