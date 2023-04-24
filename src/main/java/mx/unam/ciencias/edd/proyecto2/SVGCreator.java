@@ -4,6 +4,17 @@ import mx.unam.ciencias.edd.*;
 
 public class SVGCreator {
 
+	private class CoordenadasGraph {
+		double x, y;
+		Integer e;
+
+		CoordenadasGraph(double x, double y, Integer e) {
+			this.x = x;
+			this.y = y;
+			this.e = e;
+		}
+	}
+
 	static SVGShorts wa = new SVGShorts();
 
 	public SVGCreator() {}
@@ -178,8 +189,109 @@ public class SVGCreator {
 		return s;
 	}
 
-	public static String graphToSVG(Lista<Integer> elems, Grafica<Integer> graph) {
-		return "";
+	public static String graphToSVG(Lista<Integer> elems) {
+		Grafica<Integer> grafica = makeAGraph(elems);
+
+		double radioCirc = ((2*grafica.getElementos())* 50) / Math.PI;
+		double h = 4*50 + radioCirc*2;
+		
+		String s = wa.startSVG((int)h, (int)h);
+
+		Lista<CoordenadasGraph> lista = addCoordsToList(radioCirc, grafica.getElementos(), h/2, grafica);
+
+		if (grafica.getElementos() > 1)
+			s += drawAristas(grafica, lista);
+
+		s += drawVertex(lista);
+		s += wa.finishSVG();
+
+		return s;
+	}
+
+	private static Lista<CoordenadasGraph> addCoordsToList(double r, int cantElementos, double center, Grafica<Integer> grafica) {
+		double angulo, x, y;
+		int numParte = 0;
+		CoordenadasGraph aux = null;
+
+		Lista<CoordenadasGraph> lista = new Lista<CoordenadasGraph>();
+
+		for (Integer e : grafica) {
+
+			if (grafica.getElementos() == 1) {
+				lista.agrega(new CoordenadasGraph(center, center, e));
+			}
+
+			else { //Sacar el punto x y y con trigonometria
+				angulo = numParte++ * (360/cantElementos);
+				x = r * Math.cos(Math.toRadians(angulo));
+				y = r * Math.sin(Math.toRadians(angulo));
+				lista.agrega(new CoordenadasGraph(x, y, e));
+			}
+
+		}
+
+		return lista;
+	}
+
+	private static String drawAristas(Grafica<Integer> grafica, Lista<CoordenadasGraph> lista) {
+		String s = "";
+		for (int i = 0; i < lista.getElementos(); i++) {
+			CoordenadasGraph p = lista.get(i);
+			for (int j = i; j < grafica.getElementos(); j++) {
+				CoordenadasGraph t = lista.get(j);
+				if (grafica.sonVecinos(p.e, t.e))
+					s += wa.drawLine((int)p.x, (int)p.y, (int)t.x, (int)t.y);
+			}
+		}
+
+		return s;
+	}
+
+	private static String drawVertex(Lista<CoordenadasGraph> lista) {
+		String s = "";
+
+		IteradorLista<CoordenadasGraph> i = (IteradorLista<CoordenadasGraph>) lista.iteradorLista();
+
+		while(i.hasNext()) {
+			CoordenadasGraph n = i.next();
+			s += wa.drawGraficaVert(n.x, n.y, 25, n.e.toString());
+		}
+
+		return s;
+	}
+
+	private static Grafica<Integer> makeAGraph(Lista<Integer> elems) {
+		if ((elems.getElementos() % 2) == 1) {
+			System.out.println("Parece ser que la grafica no tiene elementos pares, revise la cantidad de elementos");
+			System.exit(-1);
+		}
+
+		Grafica<Integer> grafica = new Grafica<Integer>();
+		IteradorLista<Integer> i = (IteradorLista<Integer>) elems.iteradorLista();
+
+		while (i.hasNext()) {
+			try {
+				grafica.agrega(i.next());
+			} catch (IllegalArgumentException e) {}
+		}
+
+		i.start();
+
+		while(i.hasNext()) {
+			int prim = i.next();
+			int seg = i.next();
+
+			if (!(prim == seg)) {
+				try {
+					grafica.conecta(prim, seg);
+				} catch(IllegalArgumentException e) {
+					System.out.println("Parece ser que repetiste conexiones");
+					System.exit(-1);
+				}
+			}
+		}
+
+		return grafica;
 	}
 
 	private static String getBalanceDeAVL(String s, Estructuras e) {

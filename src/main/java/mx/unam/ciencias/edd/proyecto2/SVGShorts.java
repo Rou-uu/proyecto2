@@ -77,6 +77,13 @@ public class SVGShorts {
         return circulo + texto + (isAVL ? balanceAVL : "");
     }
 
+    public String drawGraficaVert(double x, double y, double r, String text) {
+    	String s = "";
+    	s += "<circle cx='" + x + "' cy='" + y + "' r='" + r + "' stroke='black' strocke-width='3' fill='white' />\n";
+    	s += "<text x='" + x + "' y='" + (y + 4) + "' fill='black' font-family='sans-sherif' font-size='16' text-anchor='middle'>" + text + "</text>\n";
+    	return s;
+    }
+
 	public static String finishSVG() {
 		String s = "";
 		s += "</g>\n</svg>";

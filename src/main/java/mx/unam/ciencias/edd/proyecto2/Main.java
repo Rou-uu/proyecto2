@@ -40,6 +40,7 @@ public class Main {
 				break;
 
 			case GRAFICA:
+				wa.graphToSVG(elementos);
 				break;
 		}
 	}
