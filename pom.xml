@@ -5,18 +5,18 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>mx.unam.ciencias.edd</groupId>
-  <artifactId>practica</artifactId>
+  <artifactId>proyecto2</artifactId>
   <version>EDD</version>
   <packaging>jar</packaging>
 
-  <name>Práctica 6</name>
+  <name>Proyecto 2</name>
   <description>
-    Práctica 6 de Estructuras de Datos: Gráficas.
+    Proyecto 2, graficador de las estructruras vistas.
   </description>
   <url>https://aztlan.fciencias.unam.mx/gitlab/2023-2-edd/practica6</url>
   <organization>
-    <name>Canek Peláez Valdés</name>
-    <url>https://aztlan.fciencias.unam.mx/~canek/</url>
+    <name>Jose Ruben Alfaro Gonzalez</name>
+    <url>https://github.com/Rou-uu/</url>
   </organization>
 
   <properties>
@@ -69,7 +69,7 @@
 	<configuration>
 	  <archive>
 	    <manifest>
-	      <mainClass>mx.unam.ciencias.edd.Practica6</mainClass>
+	      <mainClass>mx.unam.ciencias.edd.proyecto2.Main</mainClass>
 	    </manifest>
 	  </archive>
 	</configuration>
@@ -89,7 +89,7 @@
 
     </plugins>
 
-    <finalName>practica6</finalName>
+    <finalName>proyecto2</finalName>
   </build>
 
   <reporting>
