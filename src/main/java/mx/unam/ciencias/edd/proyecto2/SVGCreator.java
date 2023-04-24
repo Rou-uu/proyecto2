@@ -8,26 +8,102 @@ public class SVGCreator {
 
 	public SVGCreator() {}
 
-	public static String aboToSVG(Lista<Integer> elems) {
-		ArbolBinarioOrdenado<Integer> arbol = new ArbolBinarioOrdenado<Integer>(elems);
-		return "";
+	public static String arbolToSVG(Lista<Integer> elems, Estructuras e) {
+
+		ArbolBinario<Integer> arbol = null;
+		boolean isAVL = false;
+		
+		switch (e) {
+			case ROJI:
+				arbol = new ArbolRojinegro<Integer>(elems);
+				break;
+
+			case COMPLETO:
+				arbol = new ArbolBinarioCompleto<Integer>(elems);
+				break;
+
+			case ORDENADO:
+				arbol = new ArbolBinarioOrdenado<Integer>(elems);
+				break;
+
+			case AVL:
+				arbol = new ArbolAVL<Integer>(elems);
+				isAVL = true;
+				break;
+		}
+
+
+		String s = "";
+		int profundidad = arbol.altura();
+		int h = 100 + profundidad * 100;
+		int w = (int) (Math.pow(2, profundidad) * 50); //50 es el diametro de los vertices para el arbol
+
+		if (e == Estructuras.ORDENADO) {
+			w = arbol.getElementos() * 200 + 100;
+			s += wa.startSVG(w * 2, h + 100);
+		}
+
+		else 
+			s += wa.startSVG(w  + 100, h);
+
+		if (!arbol.esVacia()) {
+			s += drawAllLines(arbol.raiz(), (w/2) / 2, w/2, 50);
+			s += drawAllVertices(arbol.raiz(), (w/2) / 2, w/2, 50, e);
+		}
+
+		s += wa.finishSVG();
+
+		System.out.println(s);
+
+		return s;
 	}
 
-	public static String abcToSVG(Lista<Integer> elems) {
-		ArbolBinarioCompleto<Integer> arbol = new ArbolBinarioCompleto<Integer>(elems);
-		return "";
+	private static String drawAllVertices(VerticeArbolBinario v, double coord, double padreCoord, double y , Estructuras e) {
+		String s = "";
+
+		if (v != null) {
+			String bna = getBalanceDeAVL(v.toString(), e);
+			s += wa.drawVerticeArbol(padreCoord, y, (double) 25, v.get().toString(), colorchis(v, e), bna != null, bna);
+
+			if (v.hayIzquierdo() && v.hayDerecho()) {
+				s += drawAllVertices(v.izquierdo(), coord / 2, padreCoord - coord, y + 100, e);
+				s += drawAllVertices(v.derecho(), coord / 2, padreCoord + coord, y + 100, e);
+			}
+
+			else if (v.hayIzquierdo())
+				s += drawAllVertices(v.izquierdo(), coord / 2, padreCoord - coord, y + 100, e);
+
+			else if (v.hayDerecho())
+				s += drawAllVertices(v.derecho(), coord / 2, padreCoord + coord, y + 100, e);
+		}
+
+		return s;
 
 	}
 
-	public static String abrToSVG(Lista<Integer> elems) {
-		ArbolRojinegro<Integer> arbol = new ArbolRojinegro<Integer>(elems);
-		return "";
+	private static String drawAllLines(VerticeArbolBinario v, double coord, double padreCoord, double y) {
+		String s = "";
 
-	}
+		if (v != null) {
+			if (v.hayIzquierdo() && v.hayDerecho()) {
+				s += wa.drawLine((int) padreCoord, (int) y, (int) (padreCoord - coord), (int) y + 100);
+				s += wa.drawLine( (int)padreCoord, (int) y, (int) (padreCoord + coord), (int) y + 100);
+				s += drawAllLines(v.izquierdo(), coord/2, padreCoord - coord, y + 100);
+				s += drawAllLines(v.derecho(), coord/2, padreCoord + coord, y + 100);
+			}
 
-	public static String avlToSVG(Lista<Integer> elems) {
-		ArbolAVL<Integer> arbol = new ArbolAVL<Integer>(elems);
-		return "";
+			else if (v.hayIzquierdo()) {
+				s += wa.drawLine((int) padreCoord, (int) y, (int) (padreCoord - coord), (int) y + 100);
+				s += drawAllLines(v.izquierdo(), coord/2, padreCoord - coord, y + 100);
+			}
+
+			else if (v.hayDerecho()) {
+				s += wa.drawLine((int) padreCoord, (int) y, (int) (padreCoord + coord), (int) y + 100);
+				s += drawAllLines(v.derecho(), coord/2, padreCoord + coord, y + 100);
+			}
+		}
+
+		return s;
 	}
 
 	public static String listaToSVG(Lista<Integer> elems) {
@@ -104,5 +180,38 @@ public class SVGCreator {
 
 	public static String graphToSVG(Lista<Integer> elems, Grafica<Integer> graph) {
 		return "";
+	}
+
+	private static String getBalanceDeAVL(String s, Estructuras e) {
+		String r = null;
+
+		if (e == Estructuras.AVL) {
+			String aux = "";
+
+			for (int i = s.length() - 1; i >= 0; i--) {
+				if (s.charAt(i) == ' ') 
+					break;
+				else
+					aux = s.charAt(i) + aux;
+			}
+
+			r = aux;
+		}
+
+		return r;
+	}
+
+	private static String colorchis(VerticeArbolBinario v, Estructuras e) {
+		String color = "white";
+
+		if (e == Estructuras.ROJI) {
+			if (v.toString().substring(0, 1).equals("N"))
+				color = "black";
+			else if (v.toString().substring(0, 1).equals("R"))
+				color = "red";
+		}
+
+
+		return color;
 	}
 }

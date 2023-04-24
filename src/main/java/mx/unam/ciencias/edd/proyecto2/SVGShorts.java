@@ -65,6 +65,18 @@ public class SVGShorts {
 		return s;
 	}
 
+	public String drawVerticeArbol(double x, double y, double radius,String text, String vertexColor, boolean isAVL, String balanceHeight) {
+        String circulo = "<circle " + "cx='"+ x + "' cy='" + y + "' r='" + radius + "' fill='" + vertexColor + "' stroke='black' stroke-width='3'/>\n";
+
+        String textColor = vertexColor.equals("white") ? "black" : "white";
+
+        String texto = "<text x='" + x + "' y='" + (y + 4) + "' fill='" + textColor + "' font-family='sans-sherif' font-size='16' text-anchor='middle'>" + text + "</text>\n";
+
+        String balanceAVL = "<text " + "x='" + (x+35) + "' y='" + (y-15) + "' fill='blue' font-family='sans-sheriff' font-size='12' text-anchor='middle'>" + balanceHeight + "</text>\n";
+
+        return circulo + texto + (isAVL ? balanceAVL : "");
+    }
+
 	public static String finishSVG() {
 		String s = "";
 		s += "</g>\n</svg>";

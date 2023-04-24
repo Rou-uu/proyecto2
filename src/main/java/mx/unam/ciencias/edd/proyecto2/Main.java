@@ -25,7 +25,10 @@ public class Main {
 				break;
 
 			case ROJI:
-				wa.abrToSVG(elementos);
+			case AVL:
+			case ORDENADO:
+			case COMPLETO: 
+				wa.arbolToSVG(elementos, e);
 				break;
 
 			case COLA:
@@ -36,19 +39,8 @@ public class Main {
 				wa.pilaToSVG(elementos);
 				break;
 
-			case ORDENADO:
-				wa.aboToSVG(elementos);
-				break;
-
-			case COMPLETO:
-				wa.abcToSVG(elementos);
-				break;
-
-			case AVL:
-				wa.avlToSVG(elementos);
-				break;
-
 			case GRAFICA:
+				break;
 		}
 	}
 
@@ -85,6 +77,8 @@ public class Main {
 				}
 				
 			}
+			
+			temp = temp.trim();
 
 			if (gotClass) {
 				String element = "";
