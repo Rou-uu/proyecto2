@@ -4,17 +4,6 @@ import mx.unam.ciencias.edd.*;
 
 public class SVGCreator {
 
-	private class CoordenadasGraph {
-		double x, y;
-		Integer e;
-
-		CoordenadasGraph(double x, double y, Integer e) {
-			this.x = x;
-			this.y = y;
-			this.e = e;
-		}
-	}
-
 	static SVGShorts wa = new SVGShorts();
 
 	public SVGCreator() {}
@@ -193,7 +182,7 @@ public class SVGCreator {
 		Grafica<Integer> grafica = makeAGraph(elems);
 
 		double radioCirc = ((2*grafica.getElementos())* 50) / Math.PI;
-		double h = 4*50 + radioCirc*2;
+		double h = radioCirc*3;
 		
 		String s = wa.startSVG((int)h, (int)h);
 
@@ -204,6 +193,8 @@ public class SVGCreator {
 
 		s += drawVertex(lista);
 		s += wa.finishSVG();
+
+		System.out.println(s);
 
 		return s;
 	}
@@ -223,8 +214,8 @@ public class SVGCreator {
 
 			else { //Sacar el punto x y y con trigonometria
 				angulo = numParte++ * (360/cantElementos);
-				x = r * Math.cos(Math.toRadians(angulo));
-				y = r * Math.sin(Math.toRadians(angulo));
+				x = center + r * Math.cos(Math.toRadians(angulo));
+				y = center + r * Math.sin(Math.toRadians(angulo));
 				lista.agrega(new CoordenadasGraph(x, y, e));
 			}
 
@@ -325,5 +316,16 @@ public class SVGCreator {
 
 
 		return color;
+	}
+}
+
+class CoordenadasGraph {
+	double x, y;
+	Integer e;
+
+	CoordenadasGraph(double x, double y, Integer e) {
+		this.x = x;
+		this.y = y;
+		this.e = e;
 	}
 }
