@@ -9,6 +9,12 @@ public class Main {
 	static Estructuras e;
 
 	public static void main(String [] args) {
+
+		if (args.length > 1) {
+			System.out.println("Hay mas de un argumento en la linea de comandos");
+			System.exit(-1);
+		}
+
 		try {
 			readFiles(args, args.length != 0);
 		} catch (FileNotFoundException e) {
