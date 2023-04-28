@@ -43,8 +43,10 @@ public class SVGCreator {
 			s += wa.startSVG(w * 2, h + 100);
 		}
 
-		else 
-			s += wa.startSVG(w  + 100, h);
+		else {
+			w = w + 100;
+			s += wa.startSVG(w, h);
+		}
 
 		if (!arbol.esVacia()) {
 			s += drawAllLines(arbol.raiz(), (w/2) / 2, w/2, 50);

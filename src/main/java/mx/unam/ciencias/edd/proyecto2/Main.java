@@ -14,7 +14,9 @@ public class Main {
 		} catch (FileNotFoundException e) {
 			System.out.println("No se encontro el archivo");
 			System.exit(-1);
-		} catch (IOException e) {}
+		} catch (IOException e) {
+			System.exit(-1);
+		}
 
 		String s = "";
 		SVGCreator wa = new SVGCreator();
@@ -64,6 +66,9 @@ public class Main {
 		while ((temp = br.readLine()) != null) {
 			temp = temp.trim();
 
+			if (temp.length() == 0)
+				continue;
+
 			if (!gotClass) {
 				cas = getFirstWord(temp);
 
@@ -109,6 +114,12 @@ public class Main {
 				}
 			}
 		}
+
+		if (e == null) {
+			System.out.println("Parece que el archivo esta vacio");
+			System.exit(-1);
+		}
+
 	}
 
 	private static String getFirstWord(String s) {
